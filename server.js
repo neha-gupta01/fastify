@@ -216,7 +216,11 @@ fastify.get("/", (req, reply) => {
 });
 
 fastify.get("/portfolio", (request, reply) => {
-  reply.send(portfolioData);
+  reply.send({data : portfolioData, paginate : {
+	current_page : 1,
+	total_page : 10,
+	page_size : 20
+  }});
 });
 
 fastify.get("/about", (request, reply) => {
