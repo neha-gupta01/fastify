@@ -227,46 +227,45 @@ fastify.get("/portfolio", (request, reply) => {
     sortBy,
   } = request.query;
 
-  // let filteredResult = [];
-  // filteredResult = portfolioList.filter((item) => {
-  //   if (
-  //     searchTitle &&
-  //     !item.title.toLowerCase().includes(searchTitle.toLowerCase())
-  //   ) {
-  //     return false;
-  //   }
-  //   const commonTechnologies = item.technologies.filter(
-  //     (tech) => selectedTechnologies && selectedTechnologies.includes(tech)
-  //   );
-  //   if (
-  //     selectedTechnologies &&
-  //     selectedTechnologies.length !== commonTechnologies.length
-  //   ) {
-  //     return false;
-  //   }
-  //   if (minPrice && item.price < parseInt(minPrice)) {
-  //     return false;
-  //   }
-  //   if (maxPrice && item.price > parseInt(maxPrice)) {
-  //     return false;
-  //   }
-  //   return true;
-  // });
-  // if (sortBy === "lowToHigh") {
-  //   filteredResult.sort((a, b) => a.price - b.price);
-  // } else if (sortBy === "highToLow") {
-  //   filteredResult.sort((a, b) => b.price - a.price);
-  // }
+  let filteredResult = [];
+  filteredResult = portfolioList.filter((item) => {
+    if (
+      searchTitle &&
+      !item.title.toLowerCase().includes(searchTitle.toLowerCase())
+    ) {
+      return false;
+    }
+    const commonTechnologies = item.technologies.filter(
+      (tech) => selectedTechnologies && selectedTechnologies.includes(tech)
+    );
+    if (
+      selectedTechnologies &&
+      selectedTechnologies.length !== commonTechnologies.length
+    ) {
+      return false;
+    }
+    if (minPrice && item.price < parseInt(minPrice)) {
+      return false;
+    }
+    if (maxPrice && item.price > parseInt(maxPrice)) {
+      return false;
+    }
+    return true;
+  });
+  if (sortBy === "lowToHigh") {
+    filteredResult.sort((a, b) => a.price - b.price);
+  } else if (sortBy === "highToLow") {
+    filteredResult.sort((a, b) => b.price - a.price);
+  }
 
   const startIndex = (current_page - 1) * page_size;
   const endIndex = startIndex + parseInt(page_size);
-  const paginatedData = portfolioList.slice(startIndex, endIndex);
-
+  const paginatedData = filteredResult.slice(startIndex, endIndex);
   reply.send({
     data: paginatedData,
     paginate: {
       current_page: parseInt(current_page),
-      total_page: Math.ceil(portfolioList.length / page_size),
+      total_page: Math.ceil(filteredResult.length / page_size),
       page_size: parseInt(page_size),
     },
   });
