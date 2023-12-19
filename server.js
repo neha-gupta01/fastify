@@ -214,20 +214,21 @@ const portfolioList = [
 fastify.get("/", (req, reply) => {
   reply.send({ hello: "world" });
 });
-const itemsPerPage = 4;
+
 
 fastify.get("/portfolio", (request, reply) => {
   let {
     current_page = 1,
-    page_size = itemsPerPage,
-    searchTitle,
+    page_size = 40,
+    searchTitle = '',
     selectedTechnologies = "",
-    minPrice,
-    maxPrice,
+    minPrice = 0,
+    maxPrice = 5000000,
     sortBy,
   } = request.query;
 
   selectedTechnologies = selectedTechnologies.split(",");
+  //to-do blank string filtered array
 
   let filteredResult = [];
   filteredResult = portfolioList.filter((item) => {
