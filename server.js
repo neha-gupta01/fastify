@@ -103,7 +103,7 @@ const portfolioList = [
     title: "E-commerce Website",
     description: "HTML/CSS/JavaScript",
     price: 59,
-    technologies: ["HTML", "CSS", "Javascript"],
+    technologies: ["HTML", "Javascript"],
   },
   {
     id: 2,
@@ -217,15 +217,17 @@ fastify.get("/", (req, reply) => {
 const itemsPerPage = 4;
 
 fastify.get("/portfolio", (request, reply) => {
-  const {
+  let {
     current_page = 1,
     page_size = itemsPerPage,
     searchTitle,
-    selectedTechnologies,
+    selectedTechnologies = "",
     minPrice,
     maxPrice,
     sortBy,
   } = request.query;
+
+  selectedTechnologies = selectedTechnologies.split(",");
 
   let filteredResult = [];
   filteredResult = portfolioList.filter((item) => {
@@ -233,25 +235,28 @@ fastify.get("/portfolio", (request, reply) => {
       searchTitle &&
       !item.title.toLowerCase().includes(searchTitle.toLowerCase())
     ) {
+      console.log("1");
       return false;
     }
-    const commonTechnologies = item.technologies.filter(
-      (tech) => selectedTechnologies && selectedTechnologies.includes(tech)
+    const commonTechnologies = item.technologies.filter((tech) =>
+      selectedTechnologies.includes(tech)
     );
-    if (
-      selectedTechnologies &&
-      selectedTechnologies.length !== commonTechnologies.length
-    ) {
+    if (selectedTechnologies.length !== commonTechnologies.length) {
+      console.log("2");
       return false;
     }
     if (minPrice && item.price < parseInt(minPrice)) {
+      console.log("3");
       return false;
     }
     if (maxPrice && item.price > parseInt(maxPrice)) {
+      console.log("4");
       return false;
     }
     return true;
   });
+
+  console.log("filteredResult", filteredResult);
   if (sortBy === "lowToHigh") {
     filteredResult.sort((a, b) => a.price - b.price);
   } else if (sortBy === "highToLow") {
@@ -261,6 +266,7 @@ fastify.get("/portfolio", (request, reply) => {
   const startIndex = (current_page - 1) * page_size;
   const endIndex = startIndex + parseInt(page_size);
   const paginatedData = filteredResult.slice(startIndex, endIndex);
+
   reply.send({
     data: paginatedData,
     paginate: {
