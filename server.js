@@ -8,7 +8,9 @@ fastify.register(cors, {
 
 mongoose.connect(
   "mongodb+srv://neha:neha123@cluster.5xagc1y.mongodb.net/MyDB",
-);
+).then(()=>{
+  console.log("Connected")
+});
 
 const SkillSchema = new mongoose.Schema({
   icon: String,
@@ -16,7 +18,7 @@ const SkillSchema = new mongoose.Schema({
   description: String,
 });
 
-const Skill = mongoose.model("Skill", SkillSchema);
+const Skill = mongoose.model("skills", SkillSchema);
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
@@ -250,7 +252,6 @@ fastify.get("/portfolio", (request, reply) => {
       searchTitle &&
       !item.title.toLowerCase().includes(searchTitle.toLowerCase())
     ) {
-      console.log("1");
       return false;
     }
     if (selectedTechnologies.length > 0) {
@@ -258,22 +259,18 @@ fastify.get("/portfolio", (request, reply) => {
         selectedTechnologies.includes(tech)
       );
       if (selectedTechnologies.length !== commonTechnologies.length) {
-        console.log("2");
         return false;
       }
     }
     if (minPrice && item.price < parseInt(minPrice)) {
-      console.log("3");
       return false;
     }
     if (maxPrice && item.price > parseInt(maxPrice)) {
-      console.log("4");
       return false;
     }
     return true;
   });
 
-  console.log("filteredResult", filteredResult);
   if (sortBy === "lowToHigh") {
     filteredResult.sort((a, b) => a.price - b.price);
   } else if (sortBy === "highToLow") {
