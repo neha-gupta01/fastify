@@ -1,9 +1,22 @@
 const fastify = require("fastify")();
 const cors = require("@fastify/cors");
+const mongoose = require("mongoose");
 
 fastify.register(cors, {
   origin: true,
 });
+
+mongoose.connect(
+  "mongodb+srv://neha:neha123@cluster.5xagc1y.mongodb.net/MyDB",
+);
+
+const SkillSchema = new mongoose.Schema({
+  icon: String,
+  skill: String,
+  description: String,
+});
+
+const Skill = mongoose.model("Skill", SkillSchema);
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
@@ -40,26 +53,26 @@ const aboutData = [
   },
 ];
 
-const skillsData = [
-  {
-    icon: "fa-cart-shopping",
-    skill: "Front-end Development",
-    description:
-      "Proficient in HTML, CSS, and JavaScript. Experienced in responsive web design, building user-friendly interfaces, and using modern frameworks like ReactJS.",
-  },
-  {
-    icon: "fa-laptop",
-    skill: "Back-end Development",
-    description:
-      "Skilled in server-side programming using technologies like Node.js and Express. Experience working with databases such as MongoDB and MySQL.",
-  },
-  {
-    icon: "fa-mobile-screen-button",
-    skill: "Mobile App Development",
-    description:
-      "Proficient in developing mobile apps for iOS and Android using frameworks like React Native. Experienced in building engaging and intuitive mobile user interfaces.",
-  },
-];
+// const skillsData = [
+//   {
+//     icon: "fa-cart-shopping",
+//     skill: "Front-end Development",
+//     description:
+//       "Proficient in HTML, CSS, and JavaScript. Experienced in responsive web design, building user-friendly interfaces, and using modern frameworks like ReactJS.",
+//   },
+//   {
+//     icon: "fa-laptop",
+//     skill: "Back-end Development",
+//     description:
+//       "Skilled in server-side programming using technologies like Node.js and Express. Experience working with databases such as MongoDB and MySQL.",
+//   },
+//   {
+//     icon: "fa-mobile-screen-button",
+//     skill: "Mobile App Development",
+//     description:
+//       "Proficient in developing mobile apps for iOS and Android using frameworks like React Native. Experienced in building engaging and intuitive mobile user interfaces.",
+//   },
+// ];
 
 const cvData = {
   personalInfo: {
@@ -215,19 +228,20 @@ fastify.get("/", (req, reply) => {
   reply.send({ hello: "world" });
 });
 
-
 fastify.get("/portfolio", (request, reply) => {
   let {
     current_page = 1,
-    page_size = 40,
-    searchTitle = '',
+    page_size = 4,
+    searchTitle = "",
     selectedTechnologies = "",
     minPrice = 0,
-    maxPrice = 5000000,
+    maxPrice = 100,
     sortBy,
   } = request.query;
 
-  selectedTechnologies = selectedTechnologies.split(",");
+  selectedTechnologies = selectedTechnologies
+    .split(",")
+    .filter((tech) => tech.trim() !== "");
   //to-do blank string filtered array
 
   let filteredResult = [];
@@ -239,12 +253,14 @@ fastify.get("/portfolio", (request, reply) => {
       console.log("1");
       return false;
     }
-    const commonTechnologies = item.technologies.filter((tech) =>
-      selectedTechnologies.includes(tech)
-    );
-    if (selectedTechnologies.length !== commonTechnologies.length) {
-      console.log("2");
-      return false;
+    if (selectedTechnologies.length > 0) {
+      const commonTechnologies = item.technologies.filter((tech) =>
+        selectedTechnologies.includes(tech)
+      );
+      if (selectedTechnologies.length !== commonTechnologies.length) {
+        console.log("2");
+        return false;
+      }
     }
     if (minPrice && item.price < parseInt(minPrice)) {
       console.log("3");
@@ -286,6 +302,12 @@ fastify.get("/cv", (request, reply) => {
   reply.send(cvData);
 });
 
-fastify.get("/skills", (request, reply) => {
-  reply.send(skillsData);
+fastify.get("/skills", async (request, reply) => {
+  try {
+    const skillsData = await Skill.find({});
+    reply.send(skillsData);
+  } catch (error) {
+    console.log("Error retrieving skills data:", error);
+    reply.status(500).send({ error: "Internal server error" });
+  }
 });
