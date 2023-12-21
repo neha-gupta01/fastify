@@ -113,127 +113,126 @@ fastify.listen({ port: 3001 }).then(() => {
 //     details: "Details of your involvement and contributions",
 //   },
 // };
-
-const portfolioList = [
-  {
-    id: 1,
-    imageSrc: "images/e-commerce.png",
-    title: "E-commerce Website",
-    description: "HTML/CSS/JavaScript",
-    price: 59,
-    technologies: ["HTML", "Javascript"],
-  },
-  {
-    id: 2,
-    imageSrc: "images/landing-page.jpg",
-    title: "Landing Page",
-    description: "HTML/CSS/Bootstrap",
-    price: 12,
-    technologies: ["HTML", "CSS", "Bootstrap"],
-  },
-  {
-    id: 3,
-    imageSrc: "images/calculator-app.jpg",
-    title: "Calculator App",
-    description: "HTML/CSS/Javascript",
-    price: 46,
-    technologies: ["HTML", "CSS", "Javascript"],
-  },
-  {
-    id: 4,
-    imageSrc: "images/blog.jpg",
-    title: "Blog Website",
-    description: "HTML/CSS/PHP",
-    price: 40,
-    technologies: ["HTML", "CSS", "PHP"],
-  },
-  {
-    id: 5,
-    imageSrc: "images/task.jpg",
-    title: "Task Management App",
-    description: "ReactJS",
-    price: 25,
-    technologies: ["ReactJS"],
-  },
-  {
-    id: 6,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 20,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 7,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 27,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 8,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 62,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 9,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 14,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 10,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 50,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 11,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 55,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 12,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 5,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 13,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 19,
-    technologies: ["Python", "Plotly"],
-  },
-  {
-    id: 14,
-    imageSrc: "images/data.jpg",
-    title: "Data Visualization",
-    description: "Python/Plotly",
-    price: 7,
-    technologies: ["Python", "Plotly"],
-  },
-];
+// const portfolioList = [
+//   {
+//     id: 1,
+//     imageSrc: "images/e-commerce.png",
+//     title: "E-commerce Website",
+//     description: "HTML/CSS/JavaScript",
+//     price: 59,
+//     technologies: ["HTML", "Javascript"],
+//   },
+//   {
+//     id: 2,
+//     imageSrc: "images/landing-page.jpg",
+//     title: "Landing Page",
+//     description: "HTML/CSS/Bootstrap",
+//     price: 12,
+//     technologies: ["HTML", "CSS", "Bootstrap"],
+//   },
+//   {
+//     id: 3,
+//     imageSrc: "images/calculator-app.jpg",
+//     title: "Calculator App",
+//     description: "HTML/CSS/Javascript",
+//     price: 46,
+//     technologies: ["HTML", "CSS", "Javascript"],
+//   },
+//   {
+//     id: 4,
+//     imageSrc: "images/blog.jpg",
+//     title: "Blog Website",
+//     description: "HTML/CSS/PHP",
+//     price: 40,
+//     technologies: ["HTML", "CSS", "PHP"],
+//   },
+//   {
+//     id: 5,
+//     imageSrc: "images/task.jpg",
+//     title: "Task Management App",
+//     description: "ReactJS",
+//     price: 25,
+//     technologies: ["ReactJS"],
+//   },
+//   {
+//     id: 6,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 20,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 7,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 27,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 8,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 62,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 9,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 14,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 10,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 50,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 11,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 55,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 12,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 5,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 13,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 19,
+//     technologies: ["Python", "Plotly"],
+//   },
+//   {
+//     id: 14,
+//     imageSrc: "images/data.jpg",
+//     title: "Data Visualization",
+//     description: "Python/Plotly",
+//     price: 7,
+//     technologies: ["Python", "Plotly"],
+//   },
+// ];
 
 fastify.get("/", (req, reply) => {
   reply.send({ hello: "world" });
 });
 
-fastify.get("/portfolio", (request, reply) => {
+fastify.get("/portfolio", async (request, reply) => {
   let {
     current_page = 1,
     page_size = 4,
@@ -247,7 +246,6 @@ fastify.get("/portfolio", (request, reply) => {
   selectedTechnologies = selectedTechnologies
     .split(",")
     .filter((tech) => tech.trim() !== "");
-  //to-do blank string filtered array
 
   let filteredResult = [];
   filteredResult = portfolioList.filter((item) => {
