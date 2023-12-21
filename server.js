@@ -12,68 +12,67 @@ mongoose
     console.log("Connected");
   });
 
-const SkillSchema = new mongoose.Schema({
-  icon: String,
-  skill: String,
-  description: String,
-});
+// const SkillSchema = new mongoose.Schema({
+//   icon: String,
+//   skill: String,
+//   description: String,
+// });
+//const Skill = mongoose.model("skills", SkillSchema);
 
-const Skill = mongoose.model("skills", SkillSchema);
+// const AboutSchema = new mongoose.Schema({
+//   year: String,
+//   title: String,
+//   description: String,
+//   image: String,
+// });
 
-const AboutSchema = new mongoose.Schema({
-  year: String,
-  title: String,
-  description: String,
-  image: String,
-});
+// const About = mongoose.model("abouts", AboutSchema);
 
-const About = mongoose.model("abouts", AboutSchema);
+// const CvSchema = new mongoose.Schema({
+//   personalInfo: {
+//     profileImage: String,
+//     name: String,
+//     email: String,
+//     phone: String,
+//     address: String,
+//   },
+//   technicalSkills: [String],
+//   personalInterests: [String],
+//   profile: String,
+//   qualifications: [String],
+//   education: {
+//     year: String,
+//     institute: String,
+//     degree: String,
+//   },
+//   coursesTraining: {
+//     year: String,
+//     course: String,
+//     degree: String,
+//   },
+//   workExperience: {
+//     year: String,
+//     position: String,
+//     company: String,
+//   },
+//   extracurricularActivities: {
+//     organization: String,
+//     role: String,
+//     details: String,
+//   },
+// });
 
-const CvSchema = new mongoose.Schema({
-  personalInfo: {
-    profileImage: String,
-    name: String,
-    email: String,
-    phone: String,
-    address: String,
-  },
-  technicalSkills: [String],
-  personalInterests: [String],
-  profile: String,
-  qualifications: [String],
-  education: {
-    year: String,
-    institute: String,
-    degree: String,
-  },
-  coursesTraining: {
-    year: String,
-    course: String,
-    degree: String,
-  },
-  workExperience: {
-    year: String,
-    position: String,
-    company: String,
-  },
-  extracurricularActivities: {
-    organization: String,
-    role: String,
-    details: String,
-  },
-});
+// const Cv = mongoose.model("cvs", CvSchema);
 
-const Cv = mongoose.model("cvs", CvSchema);
+// const PortfolioSchema = new mongoose.Schema({
+//   imageSrc: String,
+//   title: String,
+//   description: String,
+//   price: Number,
+//   technologies: [String],
+// });
 
-const PortfolioSchema = new mongoose.Schema({
-  imageSrc: String,
-  title: String,
-  description: String,
-  price: Number,
-  technologies: [String],
-});
-
-const Portfolio = mongoose.model("portfolios", PortfolioSchema);
+// const Portfolio = mongoose.model("portfolios", PortfolioSchema);
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
@@ -292,33 +291,34 @@ fastify.get("/portfolio", async (request, reply) => {
   });
 });
 
-fastify.get("/about", async (request, reply) => {
-  try {
-    const aboutData = await About.find({});
-    reply.send(aboutData);
-  } catch (error) {
-    console.log("Error retrieving about data:", error);
-    reply.status(500).send({ error: "Internal server error" });
-  }
-});
+// fastify.get("/about", async (request, reply) => {
+//   try {
+//     const aboutData = await About.find({});
+//     reply.send(aboutData);
+//   } catch (error) {
+//     console.log("Error retrieving about data:", error);
+//     reply.status(500).send({ error: "Internal server error" });
+//   }
+// });
 
-fastify.get("/cv", async (request, reply) => {
-  try {
-    const cvData = await Cv.find({});
-    reply.send(cvData);
-    console.log(cvData);
-  } catch (error) {
-    console.log("Error retrieving cv data:", error);
-    reply.status(500).send({ error: "Internal server error" });
-  }
-});
+// fastify.get("/cv", async (request, reply) => {
+//   try {
+//     const cvData = await Cv.find({});
+//     reply.send(cvData);
+//     console.log(cvData);
+//   } catch (error) {
+//     console.log("Error retrieving cv data:", error);
+//     reply.status(500).send({ error: "Internal server error" });
+//   }
+// });
 
-fastify.get("/skills", async (request, reply) => {
-  try {
-    const skillsData = await Skill.find({});
-    reply.send(skillsData);
-  } catch (error) {
-    console.log("Error retrieving skills data:", error);
-    reply.status(500).send({ error: "Internal server error" });
-  }
-});
+// fastify.get("/skills", async (request, reply) => {
+//   try {
+//     const skillsData = await Skill.find({});
+//     reply.send(skillsData);
+//   } catch (error) {
+//     console.log("Error retrieving skills data:", error);
+//     reply.status(500).send({ error: "Internal server error" });
+//   }
+// });
+fastify.register(require("./routes/skillRoute"));
