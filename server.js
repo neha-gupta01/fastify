@@ -6,11 +6,11 @@ fastify.register(cors, {
   origin: true,
 });
 
-mongoose.connect(
-  "mongodb+srv://neha:neha123@cluster.5xagc1y.mongodb.net/MyDB",
-).then(()=>{
-  console.log("Connected")
-});
+mongoose
+  .connect("mongodb+srv://neha:neha123@cluster.5xagc1y.mongodb.net/MyDB")
+  .then(() => {
+    console.log("Connected");
+  });
 
 const SkillSchema = new mongoose.Schema({
   icon: String,
@@ -20,96 +20,99 @@ const SkillSchema = new mongoose.Schema({
 
 const Skill = mongoose.model("skills", SkillSchema);
 
+const AboutSchema = new mongoose.Schema({
+  year: String,
+  title: String,
+  description: String,
+  image: String,
+});
+
+const About = mongoose.model("abouts", AboutSchema);
+
+const CvSchema = new mongoose.Schema({
+  personalInfo: {
+    profileImage: String,
+    name: String,
+    email: String,
+    phone: String,
+    address: String,
+  },
+  technicalSkills: [String],
+  personalInterests: [String],
+  profile: String,
+  qualifications: [String],
+  education: {
+    year: String,
+    institute: String,
+    degree: String,
+  },
+  coursesTraining: {
+    year: String,
+    course: String,
+    degree: String,
+  },
+  workExperience: {
+    year: String,
+    position: String,
+    company: String,
+  },
+  extracurricularActivities: {
+    organization: String,
+    role: String,
+    details: String,
+  },
+});
+
+const Cv = mongoose.model("cvs", CvSchema);
+
+const PortfolioSchema = new mongoose.Schema({
+  imageSrc: String,
+  title: String,
+  description: String,
+  price: Number,
+  technologies: [String],
+});
+
+const Portfolio = mongoose.model("portfolio", PortfolioSchema);
+
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
 });
 
-const aboutData = [
-  {
-    year: "1995-2008",
-    title: "Early Passion for Technology",
-    description:
-      "From an early age, I became fascinated with computers and programming. Starting with basic HTML and CSS, I gradually expanded my skills to include JavaScript and various frameworks.",
-    image: "images/about1.jpg",
-  },
-  {
-    year: "2008-2014",
-    title: "Higher Education and Career Growth",
-    description:
-      "During my university years, I studied computer science and gained hands-on experience through internships and freelance projects. This period fueled my passion for creating innovative solutions and solving complex problems.",
-    image: "images/about2.jpg",
-  },
-  {
-    year: "2014-Present",
-    title: "Professional Excellence and Continuous Learning",
-    description:
-      "Throughout my career, I have consistently sought opportunities to refine my skills and stay updated with the latest technologies. I strive for excellence in every project I undertake and aim to deliver valuable and impactful results.",
-    image: "images/about3.jpg",
-  },
-  {
-    year: "Future",
-    title: "Continuing to Make a Difference",
-    description:
-      "I am committed to leveraging my skills and expertise to contribute to meaningful projects that have a positive impact on society. I am eager to take on new challenges and collaborate with talented individuals to create innovative solutions.",
-    image: "images/about4.jpg",
-  },
-];
-
-// const skillsData = [
-//   {
-//     icon: "fa-cart-shopping",
-//     skill: "Front-end Development",
-//     description:
-//       "Proficient in HTML, CSS, and JavaScript. Experienced in responsive web design, building user-friendly interfaces, and using modern frameworks like ReactJS.",
+// const cvData = {
+//   personalInfo: {
+//     profileImage: "images/profile.jpg",
+//     name: "James Anderson",
+//     email: " your.email@example.com",
+//     phone: "(123) 456-7890",
+//     address: "Your address",
 //   },
-//   {
-//     icon: "fa-laptop",
-//     skill: "Back-end Development",
-//     description:
-//       "Skilled in server-side programming using technologies like Node.js and Express. Experience working with databases such as MongoDB and MySQL.",
+//   technicalSkills: ["HTML", "CSS", "Javascript"],
+//   personalInterests: ["Interest 1", "Interest 2", "Interest 3"],
+//   profile:
+//     "Write a brief description of yourself, your background, and your goals. Highlight your key strengths and experiences. ",
+//   qualifications: ["Qualification 1", "Qualification 2", "Qualification 3"],
+//   eduction: {
+//     year: "Year - Year",
+//     institute: "University/Institution",
+//     degree: "Degree/Program",
 //   },
-//   {
-//     icon: "fa-mobile-screen-button",
-//     skill: "Mobile App Development",
-//     description:
-//       "Proficient in developing mobile apps for iOS and Android using frameworks like React Native. Experienced in building engaging and intuitive mobile user interfaces.",
+//   coursesTraining: {
+//     year: "Year",
+//     course: "Course/Training",
+//     degree: "Institution/Organization",
 //   },
-// ];
-
-const cvData = {
-  personalInfo: {
-    profileImage: "images/profile.jpg",
-    name: "James Anderson",
-    email: " your.email@example.com",
-    phone: "(123) 456-7890",
-    address: "Your address",
-  },
-  technicalSkills: ["HTML", "CSS", "Javascript"],
-  personalInterests: ["Interest 1", "Interest 2", "Interest 3"],
-  profile:
-    "Write a brief description of yourself, your background, and your goals. Highlight your key strengths and experiences. ",
-  qualifications: ["Qualification 1", "Qualification 2", "Qualification 3"],
-  eduction: {
-    year: "Year - Year",
-    institute: "University/Institution",
-    degree: "Degree/Program",
-  },
-  coursesTraining: {
-    year: "Year",
-    course: "Course/Training",
-    degree: "Institution/Organization",
-  },
-  workExperience: {
-    year: "Year - Year",
-    position: "Job Position",
-    company: "Company/Organization",
-  },
-  extracurricularActivities: {
-    organization: "Organization Name",
-    role: "Role/Position",
-    details: "Details of your involvement and contributions",
-  },
-};
+//   workExperience: {
+//     year: "Year - Year",
+//     position: "Job Position",
+//     company: "Company/Organization",
+//   },
+//   extracurricularActivities: {
+//     organization: "Organization Name",
+//     role: "Role/Position",
+//     details: "Details of your involvement and contributions",
+//   },
+// };
 
 const portfolioList = [
   {
@@ -291,12 +294,25 @@ fastify.get("/portfolio", (request, reply) => {
   });
 });
 
-fastify.get("/about", (request, reply) => {
-  reply.send(aboutData);
+fastify.get("/about", async (request, reply) => {
+  try {
+    const aboutData = await About.find({});
+    reply.send(aboutData);
+  } catch (error) {
+    console.log("Error retrieving about data:", error);
+    reply.status(500).send({ error: "Internal server error" });
+  }
 });
 
-fastify.get("/cv", (request, reply) => {
-  reply.send(cvData);
+fastify.get("/cv", async (request, reply) => {
+  try {
+    const cvData = await Cv.find({});
+    reply.send(cvData);
+    console.log(cvData);
+  } catch (error) {
+    console.log("Error retrieving cv data:", error);
+    reply.status(500).send({ error: "Internal server error" });
+  }
 });
 
 fastify.get("/skills", async (request, reply) => {
