@@ -73,7 +73,7 @@ const PortfolioSchema = new mongoose.Schema({
   technologies: [String],
 });
 
-const Portfolio = mongoose.model("portfolio", PortfolioSchema);
+const Portfolio = mongoose.model("portfolios", PortfolioSchema);
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
