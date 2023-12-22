@@ -2,7 +2,7 @@ const Portfolio = require("../models/Portfolio");
 const getAllPortfolios = (request, reply) => {
   let {
     current_page = 1,
-    page_size = 14,
+    page_size = 4,
     searchTitle = "",
     selectedTechnologies = "",
     minPrice = 0,
