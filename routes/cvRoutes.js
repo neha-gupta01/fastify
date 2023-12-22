@@ -1,4 +1,5 @@
 const CvController = require("../controllers/cvController");
+
 module.exports = [
   {
     method: "GET",
