@@ -13,13 +13,13 @@ const getAllPortfolios = (request, reply) => {
   const query = Portfolio.find();
 
   if (searchTitle) {
-    query.where("title", { $regex: new RegExp(searchTitle, "i") });
+    query.where("title", { $regex: RegExp(searchTitle, "i") });
   }
   if (selectedTechnologies) {
     const technologiesArray = selectedTechnologies
       .split(",")
       .map((tech) => tech.trim());
-    query.where("technologies").in(technologiesArray);
+    query.where("technologies").all(technologiesArray);
   }
   if (minPrice) {
     query.where("price").gte(parseInt(minPrice));
@@ -27,15 +27,14 @@ const getAllPortfolios = (request, reply) => {
   if (maxPrice) {
     query.where("price").lte(parseInt(maxPrice));
   }
+  if (sortBy === "lowToHigh") {
+    query.sort({ price: 1 });
+  } else if (sortBy === "highToLow") {
+    query.sort({ price: -1 });
+  }
   query
     .exec()
     .then((data) => {
-      if (sortBy === "lowToHigh") {
-        data.sort((a, b) => a.price - b.price);
-      } else if (sortBy === "highToLow") {
-        data.sort((a, b) => b.price - a.price);
-      }
-
       const startIndex = (current_page - 1) * page_size;
       const endIndex = startIndex + parseInt(page_size);
       const paginatedData = data.slice(startIndex, endIndex);

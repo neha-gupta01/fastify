@@ -1,16 +1,16 @@
 const fastify = require("fastify")();
 const cors = require("@fastify/cors");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
 
 fastify.register(cors, {
   origin: true,
 });
 
-mongoose
-  .connect("mongodb+srv://neha:neha123@cluster.5xagc1y.mongodb.net/MyDB")
-  .then(() => {
-    console.log("Connected");
-  });
+mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING).then(() => {
+  console.log("Connected");
+});
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
