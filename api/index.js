@@ -1,4 +1,4 @@
-const fastify = require("fastify")();
+const fastify = require("fastify")({logger:true});
 const cors = require("@fastify/cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -11,6 +11,8 @@ fastify.register(cors, {
 mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING).then(() => {
   console.log("Connected");
 });
+	
+mongoose.set('debug', true)
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");

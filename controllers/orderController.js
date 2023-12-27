@@ -3,6 +3,16 @@ const Order = require("../models/Order");
 const placeOrder = (request, reply) => {
   const { items, totalPrice } = request.body;
 
+  const expectedTotalPrice = items.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
+  if (expectedTotalPrice !== totalPrice) {
+    return reply.status(400).send({
+      success: false,
+      error: "Cart total price does not match the expected total price",
+    });
+  }
   const orderItems = items.map((item) => ({
     productId: item.productId,
     quantity: item.quantity,
