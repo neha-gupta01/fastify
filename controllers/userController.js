@@ -51,61 +51,55 @@ const login = (request, reply) => {
 
   User.findOne({ email })
     .then((user) => {
-      if (user) {
-        bcrypt.compare(
-          password,
-          user.password,
-          (compareError, isPasswordValid) => {
-            if (compareError) {
-              console.error("Error comparing passwords:", compareError);
-              reply
-                .status(500)
-                .send({ status: "error", message: "Internal server error" });
-              return;
-            }
-
-            if (isPasswordValid) {
-              console.log("Login successful:", user);
-              const token = jwt.sign(
-                { userID: user._id },
-                process.env.JWT_SECRET,
-                {
-                  expiresIn: "1h",
-                }
-              );
-
-              user.token = token;
-
-              user
-                .save()
-                .then((updatedUser) => {
-                  reply.send({
-                    status: "success",
-                    message: "Login successful",
-                    result: { token, data: updatedUser },
-                  });
-                })
-                .catch((error) => {
-                  console.error("Error updating user token:", error);
-                  reply.status(500).send({
-                    status: "error",
-                    message: "Internal server error",
-                  });
-                });
-            } else {
-              console.log("Incorrect password");
-              reply
-                .status(401)
-                .send({ status: "error", message: "Invalid credentials" });
-            }
-          }
-        );
-      } else {
+      if (!user) {
         console.log("User not found");
-        reply
+        return reply
           .status(401)
           .send({ status: "error", message: "Invalid credentials" });
       }
+
+      bcrypt.compare(
+        password,
+        user.password,
+        (compareError, isPasswordValid) => {
+          if (compareError) {
+            console.error("Error comparing passwords:", compareError);
+            return reply
+              .status(500)
+              .send({ status: "error", message: "Internal server error" });
+          }
+          if (!isPasswordValid) {
+            console.log("Incorrect password");
+            reply
+              .status(401)
+              .send({ status: "error", message: "Invalid credentials" });
+          }
+
+          console.log("Login successful:", user);
+          const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+          });
+
+          user.token = token;
+
+          user
+            .save()
+            .then((updatedUser) => {
+              reply.send({
+                status: "success",
+                message: "Login successful",
+                result: { token, data: updatedUser },
+              });
+            })
+            .catch((error) => {
+              console.error("Error updating user token:", error);
+              reply.status(500).send({
+                status: "error",
+                message: "Internal server error",
+              });
+            });
+        }
+      );
     })
     .catch((error) => {
       console.error("Error during login:", error);
