@@ -5,26 +5,18 @@ const { getAuthToken, verifyAuthToken } = require("../utils/index");
 
 const signUp = async (request, reply) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword } =
-      request.body;
-    console.log(password, confirmPassword);
-    if (password !== confirmPassword) {
-      return reply.status(400).send({
-        status: "error",
-        message: "Password and Confirm Password do not match",
-      });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { firstName, lastName, email, password } = request.body;
+    console.log(password);
 
     const newUser = new User({
-  //  profileImage ,
+      //  profileImage ,
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password,
     });
 
-    const token = getAuthToken(newUser._id);
+    const token = getAuthToken({ user_id: newUser._id });
 
     newUser.token = token;
     const savedUser = await newUser.save();
@@ -65,7 +57,7 @@ const login = async (request, reply) => {
         .status(401)
         .send({ status: "error", message: "Invalid credentials" });
     }
-    const token = getAuthToken(user._id);
+    const token = getAuthToken({ user_id: user._id });
 
     user.token = token;
     const userWithoutSensitiveData = await User.findById(user._id).select({
@@ -88,26 +80,22 @@ const login = async (request, reply) => {
   }
 };
 
-const handleGetUserProfile = async (request, reply) => {
-  try {
-    const user = await User.findById(request.user_id);
-
-    if (!user) {
-      return reply
-        .status(401)
-        .send({ status: "error", message: "Invalid credentials" });
-    }
-    reply.send({
-      status: "success",
-      message: "Successful",
-      result: user,
+const handleGetUserProfile = (request, reply) => {
+  User.findById(request.user_id)
+    .select("-password -token -__v")
+    .then((user) => {
+      reply.send({
+        status: "success",
+        message: "Successful",
+        result: user,
+      });
+    })
+    .catch(function error(error) {
+      console.error("Error in handleGetUserProfile:", error);
+      reply
+        .status(500)
+        .send({ status: "error", message: "Internal server error" });
     });
-  } catch (error) {
-    console.error("Error in handleGetUserProfile:", error);
-    reply
-      .status(500)
-      .send({ status: "error", message: "Internal server error" });
-  }
 };
 
 module.exports = { signUp, login, handleGetUserProfile };

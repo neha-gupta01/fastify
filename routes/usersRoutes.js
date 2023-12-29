@@ -1,20 +1,24 @@
 const userController = require("../controllers/userController");
-// const Joi = require("joi");
+const Joi = require("joi");
+const { getEncryptedString, verifyAuthToken } = require("../utils");
 
-// const signUpSchema = {
-//   body: Joi.object().keys({
-//     firstName: Joi.string().min(5).max(50).required(),
-//     lastName: Joi.string().min(5).max(50),
-//     email: Joi.string().email().required(),
-//     password: Joi.string().min(8).required(),
-//     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
-//   }),
-// };
+const signUpSchema = {
+  body: Joi.object().keys({
+    firstName: Joi.string().min(5).max(50).required(),
+    lastName: Joi.string().min(5).max(50),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(4).required(),
+    confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+  }),
+};
 
-// const signUpPreHandler = async (request, reply, done) => {
+// const signUpPreHandler = async (request, reply) => {
+//   console.log("---------------", request.body);
+//   // done();
 //   try {
-//     await request.validate(signUpSchema);
-//     done();
+//     let { error, value } = signUpSchema.body.validate(request.body);
+//     console.log("JOIIIIIIIIIII", error, value);
+//     // await request.validate(signUpSchema);
 //   } catch (error) {
 //     reply.status(400).send({
 //       status: "error",
@@ -23,12 +27,20 @@ const userController = require("../controllers/userController");
 //     });
 //   }
 // };
+
 module.exports = [
   {
     method: "POST",
     url: "/signup",
-   // schema: signUpSchema,
-    //preHandler: signUpPreHandler,
+    schema: signUpSchema,
+    validatorCompiler: ({ schema, method, url, httpPart }) => {
+      return (data) => schema.validate(data, { abortEarly: false });
+    },
+    preHandler: [
+      async (req, reply) => {
+        req.body.password = await getEncryptedString(req.body.password);
+      },
+    ],
     handler: userController.signUp,
   },
   {
@@ -47,14 +59,14 @@ module.exports = [
   {
     method: "GET",
     url: "/profile",
-    // preHandler: (request, reply, next) => {
-    //   console.log("PREHANDLER----------");
-    //   if (false) {
-    //     next();
-    //   } else {
-    //     reply.send(234);
-    //   }
-    // },
+    preHandler: (request, reply, next) => {
+      console.log("PREHANDLER----------", request.headers);
+      let { user_id } = verifyAuthToken(request.headers.auth, reply);
+      if (user_id) {
+        request.user_id = user_id;
+        next();
+      }
+    },
     handler: userController.handleGetUserProfile,
   },
 ];

@@ -1,20 +1,14 @@
-const fastify = require("fastify")({logger:true});
-const cors = require("@fastify/cors");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-dotenv.config();
+const fastify = require("fastify")({ logger: true });
+require("dotenv").config();
+require("../db");
 
-fastify.register(cors, {
+fastify.register(require("@fastify/cors"), {
   origin: true,
 });
 
-mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING).then(() => {
-  console.log("Connected");
-});
-	
-mongoose.set('debug', true)
+fastify.register(require("@fastify/formbody"));
 
-fastify.register(require('fastify-multipart'), { attachFieldsToBody: true });
+fastify.register(require("fastify-multipart"), { attachFieldsToBody: true });
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
