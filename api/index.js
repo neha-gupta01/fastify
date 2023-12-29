@@ -14,6 +14,8 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING).then(() => {
 	
 mongoose.set('debug', true)
 
+fastify.register(require('fastify-multipart'), { attachFieldsToBody: true });
+
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
 });
