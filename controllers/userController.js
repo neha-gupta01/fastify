@@ -3,6 +3,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { getAuthToken, verifyAuthToken } = require("../utils/index");
 
+const fs = require("node:fs");
+const util = require("node:util");
+const { pipeline } = require("node:stream");
+const pump = util.promisify(pipeline);
+
 const signUp = async (request, reply) => {
   try {
     const { firstName, lastName, email, password } = request.body;
@@ -98,4 +103,69 @@ const handleGetUserProfile = (request, reply) => {
     });
 };
 
-module.exports = { signUp, login, handleGetUserProfile };
+const handleFileUpload = async (request, reply) => {
+  //   console.log("request.body===>>>", request.body)
+  //   console.log("request.files----->>>", request.files)
+  let sampleFile = request.body.file;
+  // console.log({ sampleFile }, sampleFile[0]);
+  //   // const parts = request.files()
+  //   // for await (const part of parts) {
+  //   //   console.log("part----------", part)
+  //     await pump(sampleFile.file, fs.createWriteStream(sampleFile.filename))
+  //   // }
+
+  // const files = await request.saveRequestFiles()
+  // console.log(files)
+
+  new Buffer(sampleFile[0].data, "base64");
+  let sub_path = sampleFile[0].filename;
+  let filepath = "public/" + sub_path;
+  fs.writeFile(filepath, sampleFile[0].data, async (error) => {
+    if (error) {
+      // handleLogError(error);
+      console.log("Error persist while uploading a file ", error);
+      // reject(error);
+    }
+    console.log("File uploaded successfully");
+    // resolve({ url: filepath, sub_path, media_type, name });
+  });
+  // files[0].type // "file"
+  // files[0].filepath
+  // files[0].fieldname
+  // files[0].filename
+  // files[0].encoding
+  // files[0].mimetype
+  // files[0].fields // other parsed parts
+
+  //   const data = await request.files()
+  // console.log({data}, data.file)
+  // data.file // stream
+  // data.fields // other parsed parts
+  // data.fieldname
+  // data.filename
+  // data.encoding
+  // data.mimetype
+
+  // to accumulate the file in memory! Be careful!
+  //
+  // await data.toBuffer() // Buffer
+  //
+  // or
+
+  // await pump(data.file, fs.createWriteStream(data.filename))
+
+  // be careful of permission issues on disk and not overwrite
+  // sensitive files that could cause security risks
+
+  // also, consider that if the file stream is not consumed, the promise will never fulfill
+
+  // reply.send()
+
+  reply.send({
+    status: "success",
+    message: "Successful",
+    result: {},
+  });
+};
+
+module.exports = { signUp, login, handleGetUserProfile, handleFileUpload };

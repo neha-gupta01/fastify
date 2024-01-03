@@ -59,4 +59,9 @@ module.exports = [
     },
     handler: userController.handleGetUserProfile,
   },
+  {
+    method: "POST",
+    url: "/upload",
+    handler: userController.handleFileUpload,
+  },
 ];

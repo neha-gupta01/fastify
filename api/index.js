@@ -8,7 +8,10 @@ fastify.register(require("@fastify/cors"), {
 
 fastify.register(require("@fastify/formbody"));
 
-fastify.register(require("fastify-multipart"), { attachFieldsToBody: true });
+fastify.register(require("fastify-multipart"), {
+  // attachFieldsToBody: true,
+  addToBody: true,
+});
 
 fastify.listen({ port: 3001 }).then(() => {
   console.log("Logged");
