@@ -4,29 +4,20 @@ const { getEncryptedString, verifyAuthToken } = require("../utils");
 
 const signUpSchema = {
   body: Joi.object().keys({
-    firstName: Joi.string().min(5).max(50).required(),
-    lastName: Joi.string().min(5).max(50),
+    firstName: Joi.string().min(4).max(50).required(),
+    lastName: Joi.string().min(4).max(50),
     email: Joi.string().email().required(),
     password: Joi.string().min(4).required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
   }),
 };
 
-// const signUpPreHandler = async (request, reply) => {
-//   console.log("---------------", request.body);
-//   // done();
-//   try {
-//     let { error, value } = signUpSchema.body.validate(request.body);
-//     console.log("JOIIIIIIIIIII", error, value);
-//     // await request.validate(signUpSchema);
-//   } catch (error) {
-//     reply.status(400).send({
-//       status: "error",
-//       message: "Validation error",
-//       details: error.details,
-//     });
-//   }
-// };
+const loginSchema = {
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(4).required(),
+  }),
+};
 
 module.exports = [
   {
@@ -46,14 +37,13 @@ module.exports = [
   {
     method: "POST",
     url: "/login",
-    // preHandler: [
-    //   (request, reply, next) => {
-    //     // validate body data
-    //   },
-    //   (request, reply, next) => {
-    //     // request.body.password = getEncryptedPass(request.body.password)
-    //   },
-    // ],
+    schema: loginSchema,
+    validatorCompiler: ({ schema, method, url, httpPart }) => {
+      return (data) => schema.validate(data, { abortEarly: false });
+    },
+    preHandler: [async (req, reply) => {
+      req.body.password = await getEncryptedString(req.body.password);
+    }],
     handler: userController.login,
   },
   {

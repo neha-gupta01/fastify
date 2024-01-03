@@ -6,7 +6,6 @@ const { getAuthToken, verifyAuthToken } = require("../utils/index");
 const signUp = async (request, reply) => {
   try {
     const { firstName, lastName, email, password } = request.body;
-    console.log(password);
 
     const newUser = new User({
       //  profileImage ,
@@ -20,10 +19,9 @@ const signUp = async (request, reply) => {
 
     newUser.token = token;
     const savedUser = await newUser.save();
-    const userWithoutSensitiveData = await User.findById(savedUser._id).select({
-      password: 0,
-      token: 0,
-    });
+    const userWithoutSensitiveData = await User.findById(savedUser._id).select(
+      "-password -token -__v"
+    );
 
     const responseData = {
       status: "success",
@@ -43,13 +41,16 @@ const signUp = async (request, reply) => {
 const login = async (request, reply) => {
   try {
     const { email, password } = request.body;
+
     const user = await User.findOne({ email });
+
     if (!user) {
       console.log("User not found");
       return reply
         .status(404)
         .send({ status: "error", message: "User not found" });
     }
+
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword) {
       console.log("Password does not match");
@@ -60,10 +61,9 @@ const login = async (request, reply) => {
     const token = getAuthToken({ user_id: user._id });
 
     user.token = token;
-    const userWithoutSensitiveData = await User.findById(user._id).select({
-      password: 0,
-      token: 0,
-    });
+    const userWithoutSensitiveData = await User.findById(user._id).select(
+      "-password -token -__v"
+    );
 
     const responseData = {
       status: "success",
@@ -90,7 +90,7 @@ const handleGetUserProfile = (request, reply) => {
         result: user,
       });
     })
-    .catch(function error(error) {
+    .catch((error) => {
       console.error("Error in handleGetUserProfile:", error);
       reply
         .status(500)
