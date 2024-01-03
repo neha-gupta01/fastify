@@ -1,10 +1,17 @@
 const fastify = require("fastify")({ logger: true });
 require("dotenv").config();
 require("../db");
+const path = require("node:path");
 
 fastify.register(require("@fastify/cors"), {
   origin: true,
 });
+
+
+// fastify.register(require("@fastify/static"), {
+//   root: path.join(__dirname, "public"),
+//   prefix: "/public/",
+// });
 
 fastify.register(require("@fastify/formbody"));
 
@@ -25,3 +32,5 @@ let allRoutes = require("../routes");
 allRoutes.forEach((route) => {
   fastify.route(route);
 });
+
+

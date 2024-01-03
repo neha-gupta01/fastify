@@ -107,7 +107,7 @@ const handleFileUpload = async (request, reply) => {
   //   console.log("request.body===>>>", request.body)
   //   console.log("request.files----->>>", request.files)
   let sampleFile = request.body.file;
-  // console.log({ sampleFile }, sampleFile[0]);
+  console.log({ sampleFile });
   //   // const parts = request.files()
   //   // for await (const part of parts) {
   //   //   console.log("part----------", part)
@@ -117,9 +117,9 @@ const handleFileUpload = async (request, reply) => {
   // const files = await request.saveRequestFiles()
   // console.log(files)
 
-  new Buffer(sampleFile[0].data, "base64");
+  // new Buffer(sampleFile[0].data, "base64");
   let sub_path = sampleFile[0].filename;
-  let filepath = "public/" + sub_path;
+  let filepath = "assets/" + sub_path;
   fs.writeFile(filepath, sampleFile[0].data, async (error) => {
     if (error) {
       // handleLogError(error);
