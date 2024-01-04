@@ -43,7 +43,6 @@ module.exports = [
     },
     preHandler: [
       async (req, reply) => {
-        console.log(req.body.password, "...=======........");
         req.body.password = await getEncryptedString(req.body.password);
         console.log(req.body, "...........");
       },
