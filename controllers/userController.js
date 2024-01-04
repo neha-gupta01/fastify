@@ -47,8 +47,8 @@ const login = async (request, reply) => {
   try {
     const { email, password } = request.body;
 
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ email, password });
+    console.log(email, password, " .....................");
     if (!user) {
       console.log("User not found");
       return reply
@@ -56,15 +56,15 @@ const login = async (request, reply) => {
         .send({ status: "error", message: "User not found" });
     }
 
-    const comparePassword = await bcrypt.compare(password, user.password);
-    console.log("...........", comparePassword, user.password, password);
-    if (!comparePassword) {
-      console.log("Password does not match");
-      return reply
-        .status(401)
-        .send({ status: "error", message: "Invalid credentials" });
-    }
-    
+    // const comparePassword = await bcrypt.compare(password, user.password);
+    // console.log("...........", comparePassword, user.password, password);
+    // if (!comparePassword) {
+    //   console.log("Password does not match");
+    //   return reply
+    //     .status(401)
+    //     .send({ status: "error", message: "Invalid credentials" });
+    // }
+
     const token = getAuthToken({ user_id: user._id });
 
     user.token = token;

@@ -43,7 +43,9 @@ module.exports = [
     },
     preHandler: [
       async (req, reply) => {
-        // req.body.password = user ka password;
+        console.log(req.body.password, "...=======........");
+        req.body.password = await getEncryptedString(req.body.password);
+        console.log(req.body, "...........");
       },
     ],
     handler: userController.login,
