@@ -59,33 +59,32 @@ const login = (request, reply) => {
           .send({ status: "error", message: "User not found" });
       }
 
-      validateValueWithEncryptedValue(
-        request.body.password,
-        user.password
-      ).then((isMatched) => {
-        if (!isMatched) {
-          return reply
-            .status(404)
-            .send({ status: "error", message: "Password did not match" });
+      validateValueWithEncryptedValue(password, user.password).then(
+        (isMatched) => {
+          if (!isMatched) {
+            return reply
+              .status(404)
+              .send({ status: "error", message: "Password did not match" });
+          }
+
+          (async () => {
+            const token = getAuthToken({ user_id: user._id });
+            user.token = token;
+            await user.save();
+            user = user.toJSON();
+
+            delete user.password;
+            delete user.token;
+
+            const responseData = {
+              status: "success",
+              message: "Login successful",
+              result: { token, data: user },
+            };
+            return reply.send(responseData);
+          })();
         }
-
-        (async () => {
-          const token = getAuthToken({ user_id: user._id });
-          user.token = token;
-          await user.save();
-          user = user.toJSON();
-
-          delete user.password;
-          delete user.token;
-
-          const responseData = {
-            status: "success",
-            message: "Login successful",
-            result: { token, data: user },
-          };
-          return reply.send(responseData);
-        })();
-      });
+      );
     });
 };
 
