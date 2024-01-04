@@ -41,9 +41,11 @@ module.exports = [
     validatorCompiler: ({ schema, method, url, httpPart }) => {
       return (data) => schema.validate(data, { abortEarly: false });
     },
-    preHandler: [async (req, reply) => {
-      req.body.password = await getEncryptedString(req.body.password);
-    }],
+    preHandler: [
+      async (req, reply) => {
+        // req.body.password = user ka password;
+      },
+    ],
     handler: userController.login,
   },
   {
