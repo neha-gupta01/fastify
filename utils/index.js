@@ -27,4 +27,8 @@ const getEncryptedString = (string) => {
   return bcrypt.hash(string, 10);
 };
 
-module.exports = { getAuthToken, verifyAuthToken, getEncryptedString };
+const validateValueWithEncryptedValue = (value, encryptedValue) => {
+  return bcrypt.compare(value, encryptedValue);
+};
+
+module.exports = { getAuthToken, verifyAuthToken, getEncryptedString, validateValueWithEncryptedValue };

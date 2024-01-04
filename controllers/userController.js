@@ -1,7 +1,11 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { getAuthToken, verifyAuthToken } = require("../utils/index");
+const {
+  getAuthToken,
+  verifyAuthToken,
+  validateValueWithEncryptedValue,
+} = require("../utils/index");
 
 const fs = require("node:fs");
 const util = require("node:util");
@@ -43,39 +47,46 @@ const signUp = async (request, reply) => {
   }
 };
 
-const login = async (request, reply) => {
-  try {
-    const { email, password } = request.body;
+const login = (request, reply) => {
+  const { email, password } = request.body;
 
-    const user = await User.findOne({ email, password });
-    console.log(email, password, " .....................");
-    if (!user) {
-      console.log("User not found");
-      return reply
-        .status(404)
-        .send({ status: "error", message: "User not found" });
-    }
+  User.findOne({ email })
+    .select("-__v")
+    .then((user) => {
+      if (!user) {
+        return reply
+          .status(404)
+          .send({ status: "error", message: "User not found" });
+      }
 
-    const token = getAuthToken({ user_id: user._id });
+      validateValueWithEncryptedValue(
+        request.body.password,
+        user.password
+      ).then((isMatched) => {
+        if (!isMatched) {
+          return reply
+            .status(404)
+            .send({ status: "error", message: "Password did not match" });
+        }
 
-    user.token = token;
-    const userWithoutSensitiveData = await User.findById(user._id).select(
-      "-password -token -__v"
-    );
+        (async () => {
+          const token = getAuthToken({ user_id: user._id });
+          user.token = token;
+          await user.save();
+          user = user.toJSON();
 
-    const responseData = {
-      status: "success",
-      message: "Login successful",
-      result: { token, data: userWithoutSensitiveData },
-    };
+          delete user.password;
+          delete user.token;
 
-    reply.send(responseData);
-  } catch (error) {
-    console.error("Error in login:", error);
-    reply
-      .status(500)
-      .send({ status: "error", message: "Internal server error" });
-  }
+          const responseData = {
+            status: "success",
+            message: "Login successful",
+            result: { token, data: user },
+          };
+          return reply.send(responseData);
+        })();
+      });
+    });
 };
 
 const handleGetUserProfile = (request, reply) => {
