@@ -9,6 +9,7 @@ const signUpSchema = {
     email: Joi.string().email().required(),
     password: Joi.string().min(4).required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+    image : Joi.any()
   }),
 };
 

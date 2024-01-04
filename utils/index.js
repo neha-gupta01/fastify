@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const fs = require("node:fs");
 
 const getAuthToken = (payload) => {
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -31,4 +32,25 @@ const validateValueWithEncryptedValue = (value, encryptedValue) => {
   return bcrypt.compare(value, encryptedValue);
 };
 
-module.exports = { getAuthToken, verifyAuthToken, getEncryptedString, validateValueWithEncryptedValue };
+const handleFileUploading = (file, sub_path = "") => {
+  return new Promise((resolve, reject) => {
+    sub_path = sub_path + file.filename;
+    let filepath = "assets/" + sub_path;
+    fs.writeFile(filepath, file.data, (error) => {
+      if (error) {
+        console.log("Error persist while uploading a file ", error);
+        return reject(error);
+      }
+      console.log("File uploaded successfully");
+      resolve(sub_path);
+    });
+  });
+};
+
+module.exports = {
+  getAuthToken,
+  verifyAuthToken,
+  getEncryptedString,
+  validateValueWithEncryptedValue,
+  handleFileUploading,
+};

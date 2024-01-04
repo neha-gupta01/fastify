@@ -1,23 +1,17 @@
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const {
   getAuthToken,
-  verifyAuthToken,
   validateValueWithEncryptedValue,
+  handleFileUploading,
 } = require("../utils/index");
 
 const fs = require("node:fs");
-const util = require("node:util");
-const { pipeline } = require("node:stream");
-const pump = util.promisify(pipeline);
 
 const signUp = async (request, reply) => {
   try {
-    const { firstName, lastName, email, password } = request.body;
+    const { firstName, lastName, email, password, image } = request.body;
 
     const newUser = new User({
-      //  profileImage ,
       firstName,
       lastName,
       email,
@@ -28,14 +22,17 @@ const signUp = async (request, reply) => {
 
     newUser.token = token;
     const savedUser = await newUser.save();
-    const userWithoutSensitiveData = await User.findById(savedUser._id).select(
-      "-password -token -__v"
-    );
+
+    if (image && image.length) {
+      let uploaded_path = await handleFileUploading(image[0]);
+      savedUser.image = uploaded_path;
+      await savedUser.save();
+    }
 
     const responseData = {
       status: "success",
       message: "User created Successfully",
-      result: { token, data: userWithoutSensitiveData },
+      result: { token, data: handleUserOnResponse(savedUser) },
     };
 
     reply.send(responseData);
@@ -71,15 +68,11 @@ const login = (request, reply) => {
             const token = getAuthToken({ user_id: user._id });
             user.token = token;
             await user.save();
-            user = user.toJSON();
-
-            delete user.password;
-            delete user.token;
 
             const responseData = {
               status: "success",
               message: "Login successful",
-              result: { token, data: user },
+              result: { token, data: handleUserOnResponse(user) },
             };
             return reply.send(responseData);
           })();
@@ -169,6 +162,20 @@ const handleFileUpload = async (request, reply) => {
     message: "Successful",
     result: {},
   });
+};
+
+const handleUserOnResponse = (user) => {
+  user = user.toJSON();
+
+  if (user.password) {
+    delete user.password;
+  }
+
+  if (user.token) {
+    delete user.token;
+  }
+
+  return user;
 };
 
 module.exports = { signUp, login, handleGetUserProfile, handleFileUpload };
